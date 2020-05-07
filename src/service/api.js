@@ -179,9 +179,48 @@ export const userRoleList = data => {
   })
 };
 
+//保存管理员
 export const saveSystemUser = data => {
   return service({
     url: '/api/background/system/user/add',
+    method: 'post',
+    data
+  })
+};
+
+//查询管理员详情
+
+export const systemUserDestail = data => {
+  return service({
+    url: '/api/background/system/user/userDetail',
+    method: 'post',
+    data
+  })
+};
+
+
+//校验用户名
+export const checkLoginNameUnique = data => {
+  return service({
+    url: '/api/background/system/user/checkLoginNameUnique',
+    method: 'post',
+    data
+  })
+};
+
+//修改管理员
+export const updateSystemUser = data => {
+  return service({
+    url: '/api/background/system/user/edit',
+    method: 'post',
+    data
+  })
+};
+
+//重置管理员密码
+export const userResetPwd = data => {
+  return service({
+    url: '/api/background/system/user/resetPwd',
     method: 'post',
     data
   })

@@ -2,28 +2,9 @@
   <el-container style="border: 1px solid #eee">
     <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
       <el-menu :default-openeds="['1', '3']" router>
-        <el-submenu index="1">
-          <template slot="title"><i class="el-icon-user-solid"></i>用户</template>
-          <el-menu-item index="/user/home">用户管理</el-menu-item>
-          <el-menu-item index="/user/feedback">用户反馈</el-menu-item>
-          <el-menu-item index="/user/phoneapply">用户账号申请管理</el-menu-item>
-
-        </el-submenu>
-        <el-submenu index="3">
-          <template slot="title"><i class="el-icon-s-tools"></i>其他配置</template>
-          <el-menu-item-group>
-            <el-menu-item index="/configure/addedition">版本配置</el-menu-item>
-            <el-menu-item index="/configure/edition">版本记录</el-menu-item>
-            <el-menu-item index="/user/agreement">用户协议</el-menu-item>
-            <el-menu-item index="/user/agreementsetup/add">上传协议</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
-        <el-submenu index="3">
-          <template slot="title"><i class="el-icon-s-tools"></i>管理员</template>
-          <el-menu-item-group>
-            <el-menu-item index="/admin/adminlist">管理员列表</el-menu-item>
-            <el-menu-item index="/admin/addsystemuser/add">添加管理员</el-menu-item>
-          </el-menu-item-group>
+        <el-submenu index="1" v-for="(item,index) in menusArr" :key="index">
+          <template slot="title"><i class="el-icon-user-solid"></i>{{item.name}}</template>
+          <el-menu-item v-for="(data,idx) in item.sarr" :key="idx" :index="data.route">{{data.name}}</el-menu-item>
         </el-submenu>
       </el-menu>
     </el-aside>
@@ -51,17 +32,93 @@
     name: 'index',
     data() {
       return {
-
+        menusArr: [{
+          name: '用户',
+          power: 'pd:client:view',
+          sarr: [{
+            name: '用户管理',
+            route: '/user/home',
+            power: 'pd:client:view',
+          }, {
+            name: '用户反馈',
+            route: '/user/feedback',
+            power: 'pd:feedbackProblem:view',
+          }, {
+            name: '用户账号申请管理',
+            route: '/user/phoneapply',
+            power: 'pd:clientApply:view',
+          }]
+        }, {
+          name: '其他配置',
+          power: 'pd:config:view',
+          sarr: [{
+            name: '版本配置',
+            route: '/configure/addedition',
+            power: 'pd:appConfig:view',
+          }, {
+            name: '版本记录',
+            route: '/configure/edition',
+            power: 'pd:appConfig:view',
+          }, {
+            name: '用户协议',
+            route: '/user/agreement',
+            power: 'pd:protocol:view',
+          }, {
+            name: '上传协议',
+            route: '/user/agreementsetup/add',
+            power: 'pd:protocol:view',
+          }]
+        }, {
+          name: '管理员',
+          power: 'system:user:view',
+          sarr: [{
+            name: '管理员列表',
+            route: '/admin/adminlist',
+            power: 'system:user:view',
+          }, {
+            name: '添加管理员',
+            route: '/admin/addsystemuser/add',
+            power: 'system:user:view',
+          }]
+        }]
       }
     },
     // components: {
     //   search: search
     // },
     created() {
-
+      console.log(this.$store.state.menus)
+      this.arrSplice(this.menusArr);
+      // for (let i in Arr) {
+      //   if (this.$store.state.menus.indexOf(Arr[i].power) == -1) {
+      //     this.menusArr.splice(i, 1);
+      //     this.arrSplice(this.menusArr)
+      //   }
+      // Arr[i].sarr.forEach((item, index) => {
+      //   if (this.$store.state.menus.indexOf(item.power) == -1) {
+      //     this.menusArr[i].sarr.splice(index, 1);
+      //   }
+      // })
+      // }
     },
-    methods: {
 
+    methods: {
+      arrSplice(Arr) {
+        for (let i in Arr) {
+          if (this.$store.state.menus.indexOf(Arr[i].power) == -1) {
+            this.menusArr.splice(i, 1);
+            this.arrSplice(this.menusArr)
+          }
+          if (Arr[i]) {
+            Arr[i].sarr.forEach((item, index) => {
+              if (this.$store.state.menus.indexOf(item.power) == -1) {
+                this.menusArr[i].sarr.splice(index, 1);
+                this.arrSplice(this.menusArr);
+              }
+            })
+          }
+        }
+      },
     }
   };
 </script>

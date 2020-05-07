@@ -18,7 +18,7 @@
         <el-table-column fixed="right" label="操作" width="300">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click="setupAgreement(scope.row.userId)">修改</el-button>
-             <el-button type="warning" size="small" @click="deleteAgreement(scope.row.userId)">重置密码</el-button>
+            <el-button type="warning" size="small" @click="resetPassword(scope.row.userId)">重置密码</el-button>
             <el-button type="danger" size="small" @click="deleteAgreement(scope.row.userId,scope.$index)">删除</el-button>
           </template>
         </el-table-column>
@@ -36,7 +36,8 @@
   const tooUtils = require("../../utils/util.js");
   import {
     adminList,
-    deleteAdmin
+    deleteAdmin,
+    userResetPwd
   } from '../../service/api.js';
   export default {
     name: 'adminlist',
@@ -61,27 +62,51 @@
         }
         let res = await adminList(pamars);
         if (res.code == 0) {
-          console.log(111,res)
+          console.log(111, res)
           let data = res.data;
           data.rows.forEach((item) => {
             item.createTime = tooUtils.formatDate(item.createTime, true);
-            item.status = item.status==0?'正常':'停用';
+            item.status = item.status == 0 ? '正常' : '停用';
           })
           this.userData = data
         }
         // console.log(111, res)
       },
       //前往设置协议
-      setupAgreement(id){
+      setupAgreement(id) {
         this.$router.push({
           path: `./addsystemuser/${id}`
         })
       },
+      //点击重置密码
+      resetPassword(userId) {
+        this.$prompt('请输入邮箱', '提示',{
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(async({
+          value
+        })=> {
+          let pamars = {
+            userId: userId,
+            password: value
+          }
+          let res = await userResetPwd(pamars);
+          this.$message({
+            type: 'success',
+            message: '重置密码成功'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消输入'
+          });
+        });
+      },
       //删除用户协议
-      deleteAgreement: async function(id,index){
+      deleteAgreement: async function(id, index) {
         let res = await deleteAdmin(id);
         if (res.code == 0) {
-          this.userData.rows.splice(index,1);
+          this.userData.rows.splice(index, 1);
           this.$message({
             message: '操作成功',
             type: 'success'

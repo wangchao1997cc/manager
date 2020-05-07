@@ -6,12 +6,12 @@
     <el-form-item label="账号" prop="loginName">
       <el-input v-model="form.loginName"></el-input>
     </el-form-item>
-    <el-form-item label="账号密码" prop="password">
+    <el-form-item label="账号密码" prop="password" v-if="!userId">
       <el-input v-model="form.password"></el-input>
     </el-form-item>
 
     <el-form-item label="管理员权限" prop="roleId">
-      <el-checkbox-group v-model="form.roleId">
+      <el-checkbox-group v-model="form.roleIds">
         <el-checkbox v-for="(item,index) in rolelist" :key='index' :label="item.roleId">{{item.roleName}}</el-checkbox>
       </el-checkbox-group>
     </el-form-item>
@@ -27,23 +27,26 @@
 <script>
   import {
     userRoleList,
-    saveSystemUser
+    saveSystemUser,
+    systemUserDestail,
+    checkLoginNameUnique,
+    updateSystemUser
   } from '../../service/api.js';
   const tooUtils = require("../../utils/util.js");
   export default {
     name: 'addedition',
     data() {
       return {
-
-        rolelist:[],
+        rolelist: [],
         form: {
           userName: '', //用户昵称
           loginName: '', //账号
           password: '', //账号密码
-          roleId: [],  //账号权限
-          remark:'',
+          roleIds: [], //账号权限
+          remark: '',
         },
-        qiniuirl:'',
+        userId: '',
+        qiniuirl: '',
         uploadToken: {
           key: '',
           token: ''
@@ -64,7 +67,7 @@
             message: '请输入账号密码',
             trigger: 'blur'
           }],
-          roleId: [{
+          roleIds: [{
             required: true,
             message: '请选择账号权限',
             trigger: 'blur'
@@ -74,14 +77,15 @@
     },
     mounted() {
       let id = this.$route.params.id;
-      if(id!='add'){
+      if (id != 'add') {
         this.systemUserDeatil(id);
+        this.userId = id;
       }
       // this.obtainUserDetail(id); //获取用户详细信息
     },
     created: async function() {
       let res = await userRoleList();
-      if(res.code==0){
+      if (res.code == 0) {
         this.rolelist = res.data;
       }
       console.log(res)
@@ -89,11 +93,25 @@
     },
     methods: {
       //获取用户信息详情
-      systemUserDeatil: async function(id){
-        
+      systemUserDeatil: async function(id) {
+        let res = await systemUserDestail(id);
+        if (res.code == 0) {
+          let data = res.data;
+          this.form = {
+            userName: data.userName, //用户昵称
+            loginName: data.loginName, //账号
+            remark: data.remark,
+            roleIds: [],
+          };
+          let roleId = [];
+          data.roles.forEach((item) => {
+            roleId.push(item.roleId)
+          })
+          this.form.roleIds = roleId;
+        }
       },
       //重新输入
-      agaminInput(){
+      agaminInput() {
         this.form = {
           version: '', //版本号
           type: '2', //选择的系统
@@ -106,16 +124,27 @@
       onSubmit() {
         this.$refs.form.validate(async (valid) => {
           if (valid) {
-            console.log(this.from)
-            let res = await saveSystemUser(this.form);
-            console.log(res)
-            if (res.code == 0) {
+            let info = null;
+            if (!this.userId) {
+              let res = await checkLoginNameUnique(this.form.loginName);
+              if (res.code == 0) {
+                info = await saveSystemUser(this.form);
+              }
+            } else {
+              this.form.userId = this.userId;
+              info = await updateSystemUser(this.form);
+            }
+            if (info.code == 0) {
               this.$message({
                 message: '操作成功',
                 type: 'success'
               });
               this.$router.go(-1); //返回上一层
             }
+
+
+            console.log(res)
+
           } else {
             console.log('error submit!!');
             return false;
@@ -148,7 +177,7 @@
   }
 
   .el-container {
-/*    padding: 0 20px; */
+    /*    padding: 0 20px; */
     box-sizing: border-box;
     background: rgb(238, 241, 246)
   }

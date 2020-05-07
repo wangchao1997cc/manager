@@ -87,6 +87,7 @@
             let res = await userLogin(params);
             if (res) {
               that.$store.commit('SAVE_TOKEN', res.data.jToken)
+              that.$store.commit('SAVE_MENUS', res.data.menus)
               that.$message({
                 message: '恭喜你，登录成功',
                 type: 'success'
@@ -102,6 +103,14 @@
     }
   }
 </script>
+<style scoped>
+	.el-form {
+	  width: 400px;
+	  border: 1px solid #ccc;
+	  border-radius: 4upx;
+	  padding: 30px 45px 10px 10px;
+	}
+</style>
 
 <style>
   html,
@@ -118,12 +127,7 @@
     align-items: center;
   }
 
-  .el-form {
-    width: 400px;
-    border: 1px solid #ccc;
-    border-radius: 4upx;
-    padding: 30px 45px 10px 10px;
-  }
+  
 
   .title {
     color: #666666;

@@ -15,6 +15,7 @@
         <div>
           <i class="el-icon-user" style="margin-right: 15px"></i>
           <span>管理员</span>
+          <button class="singout" @click="bindSingOut">退出登录</button>
         </div>
       </el-header>
       <router-view></router-view>
@@ -119,6 +120,12 @@
           }
         }
       },
+      //退出登录
+      bindSingOut() {
+        //清除用户数据
+        sessionStorage.removeItem("store");
+        this.$router.replace('/')
+      }
     }
   };
 </script>
@@ -145,6 +152,14 @@
 
   .head_title {
     font-size: 14px;
+  }
+
+  .singout {
+    background-color: transparent;
+    border: none;
+    margin-left: 7px;
+    font-size: 16px;
+    outline: none;
   }
 
   .el-container {

@@ -106,6 +106,7 @@
 <style scoped>
 	.el-form {
 	  width: 400px;
+    height: 288px !important;
 	  border: 1px solid #ccc;
 	  border-radius: 4upx;
 	  padding: 30px 45px 10px 10px;
@@ -127,7 +128,7 @@
     align-items: center;
   }
 
-  
+
 
   .title {
     color: #666666;

@@ -11,12 +11,12 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/apis': {
+      '/api': {
         target: 'http://backtestapi.pindou.com.cn',
         changeOrigin: true,
-        pathRewrite: {
-          '^/apis': ''
-        }
+        // pathRewrite: {
+        //   '^/apis': ''
+        // }
       }
     },
 

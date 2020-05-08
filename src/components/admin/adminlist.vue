@@ -80,12 +80,14 @@
       },
       //点击重置密码
       resetPassword(userId) {
-        this.$prompt('请输入邮箱', '提示',{
+        this.$prompt('请输入新的密码', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-        }).then(async({
+          inputPattern: /^[\s\S]*.*[^\s][\s\S]*$/,
+          inputErrorMessage: '密码不可为空或者空格'
+        }).then(async ({
           value
-        })=> {
+        }) => {
           let pamars = {
             userId: userId,
             password: value

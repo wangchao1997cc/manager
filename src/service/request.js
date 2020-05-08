@@ -12,7 +12,7 @@ let loadingInstance = null //这里是loading
 
 /****** 创建axios实例 ******/
 const service = axios.create({
-  baseURL: '/apis', // api的base_url
+  // baseURL: '', // api的base_url
   timeout: 5000 // 请求超时时间
 });
 
